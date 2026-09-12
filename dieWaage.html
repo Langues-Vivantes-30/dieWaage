@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die Gleichungswaage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF3F6;
+  --panel:#FFFFFF;
+  --ink:#1F3A4D;
+  --ink-soft:#5C7488;
+  --wood:#A9744F;
+  --wood-dark:#7C5236;
+  --brass:#C9A227;
+  --brass-light:#F3D576;
+  --gold:#F4C542;
+  --gold-deep:#A47D0D;
+  --red:#E2574C;
+  --red-deep:#A93636;
+  --green:#3FA772;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Nunito',Arial,sans-serif;color:var(--ink);background:var(--paper);min-height:100vh;display:flex;justify-content:center}
+.app{width:min(1250px,97vw);padding:22px 0 30px}
+
+header{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand svg{width:40px;height:40px;flex:none}
+h1{font-family:'Baloo 2',sans-serif;font-size:clamp(22px,3.2vw,32px);margin:0;color:var(--ink);font-weight:700}
+
+.controls{display:inline-flex;gap:4px;background:var(--panel);border-radius:999px;padding:5px;box-shadow:0 2px 8px #1f3a4d14}
+.controls button{border:0;border-radius:999px;padding:9px 18px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;cursor:pointer;background:transparent;color:var(--ink-soft)}
+.controls button.active{background:var(--ink);color:white}
+.controls button:hover:not(.active){background:#eef3f6}
+
+button{font-family:'Nunito',sans-serif}
+button.launch{border:0;border-radius:999px;background:var(--green);color:white;font-size:17px;font-weight:800;padding:12px 26px;cursor:pointer;box-shadow:0 3px 10px #3fa77240}
+button.launch:hover{filter:brightness(1.04)}
+button.validate{border:0;border-radius:999px;background:var(--ink);color:white;font-size:17px;font-weight:800;padding:12px 30px;cursor:pointer;box-shadow:0 3px 10px #1f3a4d33}
+button.validate:hover:not(:disabled){filter:brightness(1.1)}
+button:disabled{opacity:.4;cursor:not-allowed}
+
+.topbar{display:flex;align-items:center;justify-content:center;gap:22px;flex-wrap:wrap;margin:4px 0 18px}
+.instruction{text-align:center;font-size:18px;font-weight:700;color:var(--ink);flex:1;min-width:280px}
+.timer{font-family:'Baloo 2',sans-serif;font-variant-numeric:tabular-nums;font-size:20px;font-weight:700;color:var(--ink);background:var(--panel);border-radius:999px;padding:8px 16px;box-shadow:0 2px 8px #1f3a4d14;white-space:nowrap}
+.timer::before{content:'⏱ ';}
+
+.balance-wrap{background:var(--panel);border-radius:26px;box-shadow:0 8px 24px #1f3a4d1a;padding:14px 8px 22px;overflow:hidden}
+svg{display:block;width:100%;height:auto}
+.beam{transform-box:fill-box;transform-origin:50% 50%;transition:transform .65s cubic-bezier(.2,.8,.25,1)}
+.tick{stroke:#7d93a3;stroke-width:2}
+.tick.major{stroke-width:3;stroke:#5c7488}
+.num{font-family:'Baloo 2',sans-serif;font-size:16px;fill:var(--ink-soft);font-weight:600}
+
+.dropzone{cursor:pointer}
+.dropzone circle{fill:#f7f5ef;stroke:#c7b48f;stroke-width:2;stroke-dasharray:5 4}
+.dropzone:hover circle{fill:#fbf0d0;stroke:var(--brass)}
+.filled-peg{cursor:pointer}
+
+.disc-top.yellow{fill:var(--gold);stroke:var(--gold-deep)}
+.disc-top.red{fill:var(--red);stroke:var(--red-deep)}
+.disc-top{stroke-width:2}
+.disc-text{font-family:'Baloo 2',sans-serif;font-size:16px;font-weight:700;pointer-events:none;fill:var(--ink)}
+
+.validate-row{display:flex;justify-content:center;margin-top:18px}
+.status{text-align:center;font-family:'Baloo 2',sans-serif;font-size:22px;font-weight:700;min-height:33px;margin-top:14px}
+.status.good{color:var(--green)}.status.bad{color:var(--red-deep)}
+.bottom{display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap;margin-top:8px}
+.score{font-size:15px;font-weight:700;color:var(--ink-soft)}
+
+.legend{display:none;justify-content:center;align-items:center;gap:9px;margin:0 0 14px;font-size:16px;font-weight:700;color:var(--ink-soft)}
+.legend.show{display:flex}
+.legend .mini{display:inline-flex;width:28px;height:28px;border-radius:50%;align-items:center;justify-content:center;border:3px solid;font-size:13px;font-family:'Baloo 2',sans-serif}
+.legend .y{background:var(--gold);border-color:var(--gold-deep);color:#5b4700}
+.legend .r{background:var(--red);border-color:var(--red-deep);color:white}
+
+.help{text-align:center;color:var(--ink-soft);font-size:14px;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+<div class="brand">
+<svg viewBox="0 0 48 48" aria-hidden="true">
+  <rect x="18" y="40" width="12" height="4" rx="2" fill="#1F3A4D"/>
+  <rect x="22" y="11" width="4" height="27" fill="#1F3A4D"/>
+  <rect x="6" y="9" width="36" height="3" rx="1.5" fill="#1F3A4D"/>
+  <line x1="10" y1="10.5" x2="6" y2="23" stroke="#1F3A4D" stroke-width="2"/>
+  <line x1="38" y1="10.5" x2="42" y2="23" stroke="#1F3A4D" stroke-width="2"/>
+  <ellipse cx="6" cy="24.5" rx="6.5" ry="3.2" fill="#F4C542" stroke="#A47D0D" stroke-width="1.5"/>
+  <ellipse cx="42" cy="24.5" rx="6.5" ry="3.2" fill="#E2574C" stroke="#A93636" stroke-width="1.5"/>
+  <circle cx="24" cy="10" r="3.4" fill="#C9A227" stroke="#7a5c14" stroke-width="1"/>
+</svg>
+<h1>Die Gleichungswaage</h1>
+</div>
+<div class="controls">
+<button id="level1" class="active">Stufe 1</button>
+<button id="level2">Stufe 2</button>
+<button id="level3">Stufe 3</button>
+<button id="level4">Stufe 4</button>
+</div>
+</header>
+
+<div class="topbar">
+<div id="instruction" class="instruction">Klicke auf „Start“, um zu beginnen.</div>
+<div id="timer" class="timer">00:00.0</div>
+<button id="launch" class="launch">▶ Start</button>
+</div>
+
+<div id="legend" class="legend">
+<span class="mini y">1</span><span>1 gelbe Scheibe</span><span>=</span>
+<span class="mini r">2</span><span>2 rote Scheiben</span>
+</div>
+
+<div class="balance-wrap">
+<svg id="balance" viewBox="0 0 1200 560" aria-label="Waage mit Skala"></svg>
+</div>
+
+<div class="validate-row"><button id="validate" class="validate" disabled>✓ Bestätigen</button></div>
+
+<div id="status" class="status"></div>
+<div class="bottom"><div id="score" class="score">Erfolge: 0</div></div>
+<div class="help">Klicke auf eine Markierung, um eine Scheibe abzulegen. Ein 2. Klick auf dieselbe Markierung fügt eine zweite Scheibe hinzu (Verdopplung, ab Stufe 3), ein 3. Klick entfernt beide wieder. Bei Stufe 1 und 2 entfernt ein 2. Klick die Scheibe direkt.</div>
+</div>
+
+<script>
+const svg=document.getElementById('balance');
+const instruction=document.getElementById('instruction');
+const statusEl=document.getElementById('status');
+const timerEl=document.getElementById('timer');
+const scoreEl=document.getElementById('score');
+const launchBtn=document.getElementById('launch');
+const validateBtn=document.getElementById('validate');
+const legend=document.getElementById('legend');
+
+let level=1, target=0, given=[], answer=null, score=0, running=false, locked=false, started=false, startTime=0, timerRAF=null;
+const MAX=20, cx=600, beamY=285, spacing=27;
+const leftX=n=>cx-n*spacing, rightX=n=>cx+n*spacing;
+
+function el(tag,attrs={},text=''){
+  const e=document.createElementNS('http://www.w3.org/2000/svg',tag);
+  for(const [k,v] of Object.entries(attrs)) e.setAttribute(k,v);
+  if(text)e.textContent=text;
+  return e;
+}
+function formatTime(ms){
+  const total=ms/1000, min=Math.floor(total/60), sec=total%60;
+  return String(min).padStart(2,'0')+':'+sec.toFixed(1).padStart(4,'0');
+}
+function startTimer(){
+  running=true; startTime=performance.now(); timerEl.textContent='00:00.0';
+  cancelAnimationFrame(timerRAF);
+  const tick=()=>{if(!running)return;timerEl.textContent=formatTime(performance.now()-startTime);timerRAF=requestAnimationFrame(tick)};
+  timerRAF=requestAnimationFrame(tick);
+}
+function stopTimer(){running=false;cancelAnimationFrame(timerRAF)}
+
+function randomInt(a,b){return a+Math.floor(Math.random()*(b-a+1))}
+function shuffle(a){return a.sort(()=>Math.random()-.5)}
+
+function newExercise(){
+  started=true; answer=null; given=[]; locked=false; statusEl.textContent=''; statusEl.className='status';
+  validateBtn.disabled=true;
+  timerEl.textContent='00:00.0';
+  if(level===1){
+    target=randomInt(2,19);
+    instruction.textContent='Finde die gleiche Zahl rechts.';
+  }else if(level===2){
+    const a=randomInt(1,9), b=randomInt(1,9);
+    given=[a,b]; target=a+b;
+    instruction.textContent='Die beiden Scheiben liegen rechts. Finde den Wert links, der die Waage ins Gleichgewicht bringt.';
+  }else if(level===3){
+    target=randomInt(3,15);
+    instruction.textContent='Finde zwei Werte rechts, deren Summe die Scheibe links ausgleicht.';
+  }else{
+    target=randomInt(2,10);
+    let parts=[];
+    // 2 bis 4 rote Scheiben, deren Werte zusammen 2 × Zielwert ergeben.
+    const count=randomInt(2,4);
+    let remaining=2*target;
+    for(let i=0;i<count-1;i++){
+      const min=1, max=Math.min(12,remaining-(count-i-1));
+      const v=randomInt(min,max); parts.push(v); remaining-=v;
+    }
+    parts.push(remaining);
+    if(parts.some(v=>v>20)){ newExercise(); return; }
+    given=shuffle(parts);
+    instruction.textContent='Finde einen oder mehrere Werte rechts, um die gelbe Scheibe auszugleichen (eine einzige Scheibe genügt, wenn sie das Doppelte wert ist).';
+  }
+  draw();
+}
+
+function launch(){
+  if(running)return;
+  newExercise();
+  startTimer();
+  validateBtn.disabled=false;
+}
+
+// ---- Darstellung einer Scheibe (flache Scheibe mit Loch in der Mitte) ----
+function rondelle(x,y,n,type){
+  const g=el('g',{class:'piece'});
+  const rOut=23, rIn=13;
+  const d=`M ${x-rOut},${y} a ${rOut},${rOut} 0 1,0 ${rOut*2},0 a ${rOut},${rOut} 0 1,0 -${rOut*2},0 Z `+
+          `M ${x-rIn},${y} a ${rIn},${rIn} 0 1,0 ${rIn*2},0 a ${rIn},${rIn} 0 1,0 -${rIn*2},0 Z`;
+  g.appendChild(el('path',{d,'fill-rule':'evenodd',class:'disc-top '+type}));
+  g.appendChild(el('text',{x,y:y+5,'text-anchor':'middle',class:'disc-text'},String(n)));
+  return g;
+}
+
+// Zeichnet einen festen Stapel von Scheiben (Hinweise, nicht anklickbar)
+function renderPile(g,values,xFn,type){
+  const counts={};
+  values.forEach(val=>{
+    const stackIdx = counts[val] || 0;
+    counts[val] = stackIdx+1;
+    const x=xFn(val);
+    const y=(beamY-31)-stackIdx*13;
+    g.appendChild(rondelle(x,y,val,type));
+  });
+}
+
+// Zählt, wie oft der Wert n in der Antwort des Nutzers vorkommt
+function countOf(n){
+  if(level<=2) return answer===n ? 1 : 0;
+  return answer ? answer.filter(v=>v===n).length : 0;
+}
+
+// Zeichnet für jede Markierung auf der Antwortseite entweder ein leeres Feld oder 1 bzw. 2 gestapelte Scheiben.
+// Derselbe Klick (auf das leere Feld oder auf die Scheiben) lässt den Zyklus 0 -> 1 -> 2 -> 0 weiterlaufen.
+function renderAnswerPegs(g,side,xFn,type){
+  for(let n=1;n<=MAX;n++){
+    const x=xFn(n);
+    const count=countOf(n);
+    if(count===0){
+      const z=el('g',{class:'dropzone'});
+      z.appendChild(el('circle',{cx:x,cy:beamY-31,r:21}));
+      z.addEventListener('click',e=>{e.stopPropagation();if(locked||!running)return;place(side,n)});
+      g.appendChild(z);
+    }else{
+      const wrap=el('g',{class:'filled-peg'});
+      for(let k=0;k<count;k++) wrap.appendChild(rondelle(x,(beamY-31)-k*13,n,type));
+      wrap.addEventListener('click',e=>{e.stopPropagation();if(locked||!running)return;place(side,n)});
+      g.appendChild(wrap);
+    }
+  }
+}
+
+function place(side,n){
+  if(level<=2){
+    answer = (answer===n) ? null : n;
+  }else{
+    if(!answer) answer=[];
+    const count=answer.filter(v=>v===n).length;
+    const maxTotal = level===3 ? 2 : 4;
+    if(count===0){
+      if(answer.length<maxTotal) answer.push(n);
+    }else if(count===1){
+      if(answer.length<maxTotal) answer.push(n);
+    }else{
+      answer=answer.filter(v=>v!==n);
+    }
+  }
+  statusEl.textContent='';statusEl.className='status';
+  validateBtn.disabled=false;
+  draw();
+}
+
+// Verläufe für den hölzernen Ständer und den Messing-Drehpunkt
+function addDefs(){
+  const defs=el('defs');
+  const wood=el('linearGradient',{id:'woodGrad',x1:'0',y1:'0',x2:'0',y2:'1'});
+  wood.appendChild(el('stop',{offset:'0%','stop-color':'#c9975c'}));
+  wood.appendChild(el('stop',{offset:'55%','stop-color':'#a9744f'}));
+  wood.appendChild(el('stop',{offset:'100%','stop-color':'#835b3c'}));
+  defs.appendChild(wood);
+  const brass=el('radialGradient',{id:'brassGrad',cx:'35%',cy:'30%',r:'75%'});
+  brass.appendChild(el('stop',{offset:'0%','stop-color':'#f6dd8c'}));
+  brass.appendChild(el('stop',{offset:'55%','stop-color':'#cda32c'}));
+  brass.appendChild(el('stop',{offset:'100%','stop-color':'#93711c'}));
+  defs.appendChild(brass);
+  const beam=el('linearGradient',{id:'beamGrad',x1:'0',y1:'0',x2:'0',y2:'1'});
+  beam.appendChild(el('stop',{offset:'0%','stop-color':'#3c5871'}));
+  beam.appendChild(el('stop',{offset:'100%','stop-color':'#233848'}));
+  defs.appendChild(beam);
+  svg.appendChild(defs);
+}
+
+function draw(){
+  svg.innerHTML='';
+  addDefs();
+  // Ständer und Drehpunkt (immer sichtbar) — Holz mit Messingfassung
+  svg.appendChild(el('ellipse',{cx:600,cy:496,rx:95,ry:13,fill:'url(#woodGrad)',stroke:'#6b4429','stroke-width':2}));
+  svg.appendChild(el('polygon',{points:'560,488 640,488 617,332 583,332',fill:'url(#woodGrad)',stroke:'#6b4429','stroke-width':2}));
+  svg.appendChild(el('rect',{x:578,y:325,width:44,height:9,rx:4,fill:'url(#brassGrad)',stroke:'#7a5c14','stroke-width':1.5}));
+  svg.appendChild(el('circle',{cx,cy:beamY,r:15,fill:'url(#brassGrad)',stroke:'#7a5c14','stroke-width':2}));
+  svg.appendChild(el('circle',{cx:cx-5,cy:beamY-5,r:4,fill:'#ffffff',opacity:'0.45'}));
+
+  const g=el('g',{class:'beam'});
+  g.appendChild(el('rect',{x:55,y:beamY-7,width:1090,height:14,rx:7,fill:'url(#beamGrad)',stroke:'#17262f','stroke-width':1}));
+  g.appendChild(el('rect',{x:70,y:beamY-5,width:1060,height:2,rx:1,fill:'#ffffff',opacity:'0.18'}));
+
+  if(started){
+    // Skalenstriche
+    for(let n=1;n<=MAX;n++){
+      for(const side of [-1,1]){
+        const x=cx+side*n*spacing;
+        g.appendChild(el('line',{x1:x,y1:beamY-8,x2:x,y2:beamY-28,class:'tick '+(n%5===0?'major':'')}));
+        const y=n%2===0 ? beamY-40 : beamY+42;
+        g.appendChild(el('text',{x,y,'text-anchor':'middle',class:'num'},String(n)));
+      }
+    }
+
+    if(level===1){
+      renderPile(g,[target],leftX,'yellow');
+      renderAnswerPegs(g,'right',rightX,'yellow');
+    }
+    if(level===2){
+      renderPile(g,given,rightX,'yellow');
+      renderAnswerPegs(g,'left',leftX,'yellow');
+    }
+    if(level===3){
+      renderPile(g,[target],leftX,'yellow');
+      renderAnswerPegs(g,'right',rightX,'yellow');
+    }
+    if(level===4){
+      renderPile(g,[target],leftX,'yellow');
+      renderAnswerPegs(g,'right',rightX,'red');
+    }
+  }
+
+  svg.appendChild(g);
+  updateTilt();
+}
+
+function currentMasses(){
+  if(level===1)return {L:target,R:answer===null?0:answer};
+  if(level===2)return {L:answer===null?0:answer,R:given.reduce((a,b)=>a+b,0)};
+  if(level===3)return {L:target,R:answer?answer.reduce((a,b)=>a+b,0):0};
+  return {L:target,R:answer?answer.reduce((a,b)=>a+b,0)/2:0};
+}
+
+// Neigt den Waagebalken zur schwereren Seite, proportional zum Massenunterschied
+function updateTilt(){
+  const {L,R}=currentMasses();
+  const diff=R-L;
+  const MAX_DIFF=20;   // Differenz, ab der die maximale Neigung erreicht wird
+  const MAX_ANGLE=16;  // Grad
+  let angle=(diff/MAX_DIFF)*MAX_ANGLE;
+  angle=Math.max(-MAX_ANGLE,Math.min(MAX_ANGLE,angle));
+  const beamGroup=svg.querySelector('.beam');
+  if(beamGroup) beamGroup.style.transform=`rotate(${angle}deg)`;
+}
+
+function validAnswer(){
+  if(level===1)return answer!==null && answer===target;
+  if(level===2)return answer!==null && answer===target;
+  if(level===3)return Array.isArray(answer)&&answer.length===2&&answer[0]+answer[1]===target;
+  if(level===4)return Array.isArray(answer)&&answer.length>=1&&answer.length<=4&&answer.reduce((a,b)=>a+b,0)===2*target;
+}
+
+function check(){
+  if(!running || locked)return;
+  const complete =
+    (level<=2 && answer!==null) ||
+    (level===3 && answer && answer.length===2) ||
+    (level===4 && answer && answer.length>=1);
+  if(!complete){
+    statusEl.textContent='Vervollständige deine Antwort, bevor du bestätigst.';
+    statusEl.className='status bad'; return;
+  }
+  if(validAnswer()){
+    locked=true; stopTimer(); score++;
+    statusEl.textContent='RICHTIG! Super! ✓'; statusEl.className='status good';
+    scoreEl.textContent=`Erfolge: ${score}`;
+    validateBtn.disabled=true;
+    draw();
+  }else{
+    statusEl.textContent='FALSCH. Die Waage ist nicht im Gleichgewicht.';
+    statusEl.className='status bad';
+    draw();
+  }
+}
+
+function setLevel(n){
+  level=n;
+  document.querySelectorAll('.controls button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('level'+n).classList.add('active');
+  legend.classList.toggle('show',n===4);
+  stopTimer(); timerEl.textContent='00:00.0';
+  started=false; target=0; answer=null; given=[]; locked=false;
+  statusEl.textContent='';statusEl.className='status';
+  instruction.textContent='Klicke auf „Start“, um zu beginnen.';
+  validateBtn.disabled=true;
+  draw();
+}
+
+document.getElementById('level1').onclick=()=>setLevel(1);
+document.getElementById('level2').onclick=()=>setLevel(2);
+document.getElementById('level3').onclick=()=>setLevel(3);
+document.getElementById('level4').onclick=()=>setLevel(4);
+launchBtn.onclick=launch;
+validateBtn.onclick=check;
+
+setLevel(1);
+</script>
+</body>
+</html>
