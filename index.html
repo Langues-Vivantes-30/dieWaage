@@ -24,13 +24,16 @@
   --green:#3FA772;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:'Nunito',Arial,sans-serif;color:var(--ink);background:var(--paper);min-height:100vh;display:flex;justify-content:center}
-.app{width:min(1250px,97vw);padding:22px 0 30px}
+html,body{height:100%;margin:0}
+body{font-family:'Nunito',Arial,sans-serif;color:var(--ink);background:var(--paper);display:flex;justify-content:center;overflow:auto}
+.app{width:min(1250px,97vw);height:100vh;height:100dvh;padding:clamp(10px,2vh,22px) 0 clamp(10px,2vh,26px);display:flex;flex-direction:column}
 
-header{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:18px}
-.brand{display:flex;align-items:center;gap:10px}
-.brand svg{width:40px;height:40px;flex:none}
-h1{font-family:'Baloo 2',sans-serif;font-size:clamp(22px,3.2vw,32px);margin:0;color:var(--ink);font-weight:700}
+header{display:flex;flex-direction:column;align-items:center;gap:clamp(8px,1.5vh,14px);margin-bottom:clamp(6px,1.2vh,16px);flex:none}
+.header-row{display:flex;align-items:center;gap:18px;width:100%}
+.logo{width:clamp(40px,6vh,60px);height:clamp(40px,6vh,60px);object-fit:contain;flex:none;border-radius:12px}
+.brand{flex:1;display:flex;align-items:center;justify-content:center;gap:10px}
+.brand svg{width:38px;height:38px;flex:none}
+h1{font-family:'Baloo 2',sans-serif;font-size:clamp(20px,2.6vh,32px);margin:0;color:var(--ink);font-weight:700}
 
 .controls{display:inline-flex;gap:4px;background:var(--panel);border-radius:999px;padding:5px;box-shadow:0 2px 8px #1f3a4d14}
 .controls button{border:0;border-radius:999px;padding:9px 18px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;cursor:pointer;background:transparent;color:var(--ink-soft)}
@@ -44,13 +47,19 @@ button.validate{border:0;border-radius:999px;background:var(--ink);color:white;f
 button.validate:hover:not(:disabled){filter:brightness(1.1)}
 button:disabled{opacity:.4;cursor:not-allowed}
 
-.topbar{display:flex;align-items:center;justify-content:center;gap:22px;flex-wrap:wrap;margin:4px 0 18px}
+.topbar{display:flex;align-items:center;justify-content:center;gap:22px;flex-wrap:wrap;margin:clamp(4px,0.8vh,8px) 0 clamp(8px,1.5vh,16px);flex:none}
 .instruction{text-align:center;font-size:18px;font-weight:700;color:var(--ink);flex:1;min-width:280px}
 .timer{font-family:'Baloo 2',sans-serif;font-variant-numeric:tabular-nums;font-size:20px;font-weight:700;color:var(--ink);background:var(--panel);border-radius:999px;padding:8px 16px;box-shadow:0 2px 8px #1f3a4d14;white-space:nowrap}
 .timer::before{content:'⏱ ';}
 
-.balance-wrap{background:var(--panel);border-radius:26px;box-shadow:0 8px 24px #1f3a4d1a;padding:14px 8px 22px;overflow:hidden}
-svg{display:block;width:100%;height:auto}
+.legend{display:flex;justify-content:center;align-items:center;gap:10px;margin:0 0 clamp(6px,1vh,14px);flex:none}
+.legend .eq{font-family:'Baloo 2',sans-serif;font-size:20px;font-weight:700;color:var(--ink-soft)}
+.legend .mini{width:26px;height:26px;border-radius:50%;flex:none}
+.legend .mini.y{border:3px solid var(--gold-deep);background:radial-gradient(circle,var(--panel) 30%,var(--gold) 31%)}
+.legend .mini.r{border:3px solid var(--red-deep);background:radial-gradient(circle,var(--panel) 30%,var(--red) 31%)}
+
+.balance-wrap{background:var(--panel);border-radius:26px;box-shadow:0 8px 24px #1f3a4d1a;padding:clamp(8px,1.5vh,14px) 8px clamp(10px,1.5vh,20px);flex:1 1 auto;min-height:0;display:flex}
+svg{display:block;width:100%;height:100%;flex:1;min-height:0}
 .beam{transform-box:fill-box;transform-origin:50% 50%;transition:transform .65s cubic-bezier(.2,.8,.25,1)}
 .tick{stroke:#7d93a3;stroke-width:2}
 .tick.major{stroke-width:3;stroke:#5c7488}
@@ -64,26 +73,23 @@ svg{display:block;width:100%;height:auto}
 .disc-top.yellow{fill:var(--gold);stroke:var(--gold-deep)}
 .disc-top.red{fill:var(--red);stroke:var(--red-deep)}
 .disc-top{stroke-width:2}
-.disc-text{font-family:'Baloo 2',sans-serif;font-size:16px;font-weight:700;pointer-events:none;fill:var(--ink)}
+.disc-hole{fill:var(--panel)}
+.disc-text{font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:700;pointer-events:none;fill:var(--ink)}
 
-.validate-row{display:flex;justify-content:center;margin-top:18px}
-.status{text-align:center;font-family:'Baloo 2',sans-serif;font-size:22px;font-weight:700;min-height:33px;margin-top:14px}
+.validate-row{display:flex;justify-content:center;margin-top:clamp(8px,1.5vh,16px);flex:none}
+.status{text-align:center;font-family:'Baloo 2',sans-serif;font-size:22px;font-weight:700;min-height:30px;margin-top:clamp(6px,1vh,12px);flex:none}
 .status.good{color:var(--green)}.status.bad{color:var(--red-deep)}
-.bottom{display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap;margin-top:8px}
+.bottom{display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap;margin-top:6px;flex:none}
 .score{font-size:15px;font-weight:700;color:var(--ink-soft)}
 
-.legend{display:none;justify-content:center;align-items:center;gap:9px;margin:0 0 14px;font-size:16px;font-weight:700;color:var(--ink-soft)}
-.legend.show{display:flex}
-.legend .mini{display:inline-flex;width:28px;height:28px;border-radius:50%;align-items:center;justify-content:center;border:3px solid;font-size:13px;font-family:'Baloo 2',sans-serif}
-.legend .y{background:var(--gold);border-color:var(--gold-deep);color:#5b4700}
-.legend .r{background:var(--red);border-color:var(--red-deep);color:white}
-
-.help{text-align:center;color:var(--ink-soft);font-size:14px;margin-top:14px}
+.help{text-align:center;color:var(--ink-soft);font-size:13px;margin-top:clamp(4px,1vh,12px);flex:none}
 </style>
 </head>
 <body>
 <div class="app">
 <header>
+<div class="header-row">
+<img class="logo" src="/IMG/logo.png" alt="Logo">
 <div class="brand">
 <svg viewBox="0 0 48 48" aria-hidden="true">
   <rect x="18" y="40" width="12" height="4" rx="2" fill="#1F3A4D"/>
@@ -97,11 +103,13 @@ svg{display:block;width:100%;height:auto}
 </svg>
 <h1>Die Gleichungswaage</h1>
 </div>
+</div>
 <div class="controls">
 <button id="level1" class="active">Stufe 1</button>
 <button id="level2">Stufe 2</button>
 <button id="level3">Stufe 3</button>
 <button id="level4">Stufe 4</button>
+<button id="level5">Stufe 5</button>
 </div>
 </header>
 
@@ -111,20 +119,17 @@ svg{display:block;width:100%;height:auto}
 <button id="launch" class="launch">▶ Start</button>
 </div>
 
-<div id="legend" class="legend">
-<span class="mini y">1</span><span>1 gelbe Scheibe</span><span>=</span>
-<span class="mini r">2</span><span>2 rote Scheiben</span>
-</div>
+<div id="legend" class="legend"></div>
 
 <div class="balance-wrap">
-<svg id="balance" viewBox="0 0 1200 560" aria-label="Waage mit Skala"></svg>
+<svg id="balance" viewBox="0 0 1200 560" preserveAspectRatio="xMidYMid meet" aria-label="Waage mit Skala"></svg>
 </div>
 
 <div class="validate-row"><button id="validate" class="validate" disabled>✓ Bestätigen</button></div>
 
 <div id="status" class="status"></div>
 <div class="bottom"><div id="score" class="score">Erfolge: 0</div></div>
-<div class="help">Klicke auf eine Markierung, um eine Scheibe abzulegen. Ein 2. Klick auf dieselbe Markierung fügt eine zweite Scheibe hinzu (Verdopplung, ab Stufe 3), ein 3. Klick entfernt beide wieder. Bei Stufe 1 und 2 entfernt ein 2. Klick die Scheibe direkt.</div>
+<div class="help">Klicke auf eine Markierung, um eine Scheibe abzulegen. Bei Stufe 3 und 5 fügt ein 2. Klick auf dieselbe Markierung eine zweite Scheibe hinzu (Verdopplung), ein 3. Klick entfernt beide. Bei Stufe 1, 2 und 4 entfernt ein 2. Klick die Scheibe direkt.</div>
 </div>
 
 <script>
@@ -176,6 +181,9 @@ function newExercise(){
   }else if(level===3){
     target=randomInt(3,15);
     instruction.textContent='Finde zwei Werte rechts, deren Summe die Scheibe links ausgleicht.';
+  }else if(level===4){
+    target=randomInt(6,24);
+    instruction.textContent='Finde drei verschiedene Werte rechts, deren Summe die Scheibe links ausgleicht. Verwende genau drei Scheiben – keine Wiederholungen.';
   }else{
     target=randomInt(2,10);
     let parts=[];
@@ -201,14 +209,13 @@ function launch(){
   validateBtn.disabled=false;
 }
 
-// ---- Darstellung einer Scheibe (flache Scheibe mit Loch in der Mitte) ----
+// ---- Darstellung einer Scheibe: Ring + blickdichtes Loch (verdeckt, was dahinter liegt) ----
 function rondelle(x,y,n,type){
   const g=el('g',{class:'piece'});
   const rOut=23, rIn=13;
-  const d=`M ${x-rOut},${y} a ${rOut},${rOut} 0 1,0 ${rOut*2},0 a ${rOut},${rOut} 0 1,0 -${rOut*2},0 Z `+
-          `M ${x-rIn},${y} a ${rIn},${rIn} 0 1,0 ${rIn*2},0 a ${rIn},${rIn} 0 1,0 -${rIn*2},0 Z`;
-  g.appendChild(el('path',{d,'fill-rule':'evenodd',class:'disc-top '+type}));
-  g.appendChild(el('text',{x,y:y+5,'text-anchor':'middle',class:'disc-text'},String(n)));
+  g.appendChild(el('circle',{cx:x,cy:y,r:rOut,class:'disc-top '+type}));
+  g.appendChild(el('circle',{cx:x,cy:y,r:rIn,class:'disc-hole'}));
+  g.appendChild(el('text',{x,y:y+6,'text-anchor':'middle',class:'disc-text'},String(n)));
   return g;
 }
 
@@ -231,28 +238,41 @@ function countOf(n){
 }
 
 // Zeichnet für jede Markierung auf der Antwortseite entweder ein leeres Feld oder 1 bzw. 2 gestapelte Scheiben.
-// Derselbe Klick (auf das leere Feld oder auf die Scheiben) lässt den Zyklus 0 -> 1 -> 2 -> 0 weiterlaufen.
+// Erst werden ALLE leeren Felder gezeichnet, danach ALLE belegten Felder — so liegt eine gesetzte
+// Scheibe immer vollständig über den benachbarten leeren Feldern, unabhängig von ihrer Position.
 function renderAnswerPegs(g,side,xFn,type){
+  const empties=[], filled=[];
   for(let n=1;n<=MAX;n++){
+    (countOf(n)===0 ? empties : filled).push(n);
+  }
+  empties.forEach(n=>{
+    const x=xFn(n);
+    const z=el('g',{class:'dropzone'});
+    z.appendChild(el('circle',{cx:x,cy:beamY-31,r:21}));
+    z.addEventListener('click',e=>{e.stopPropagation();if(locked||!running)return;place(side,n)});
+    g.appendChild(z);
+  });
+  filled.forEach(n=>{
     const x=xFn(n);
     const count=countOf(n);
-    if(count===0){
-      const z=el('g',{class:'dropzone'});
-      z.appendChild(el('circle',{cx:x,cy:beamY-31,r:21}));
-      z.addEventListener('click',e=>{e.stopPropagation();if(locked||!running)return;place(side,n)});
-      g.appendChild(z);
-    }else{
-      const wrap=el('g',{class:'filled-peg'});
-      for(let k=0;k<count;k++) wrap.appendChild(rondelle(x,(beamY-31)-k*13,n,type));
-      wrap.addEventListener('click',e=>{e.stopPropagation();if(locked||!running)return;place(side,n)});
-      g.appendChild(wrap);
-    }
-  }
+    const wrap=el('g',{class:'filled-peg'});
+    for(let k=0;k<count;k++) wrap.appendChild(rondelle(x,(beamY-31)-k*13,n,type));
+    wrap.addEventListener('click',e=>{e.stopPropagation();if(locked||!running)return;place(side,n)});
+    g.appendChild(wrap);
+  });
 }
 
 function place(side,n){
   if(level<=2){
     answer = (answer===n) ? null : n;
+  }else if(level===4){
+    if(!answer) answer=[];
+    const count=answer.filter(v=>v===n).length;
+    if(count===0){
+      if(answer.length<3) answer.push(n);
+    }else{
+      answer=answer.filter(v=>v!==n);
+    }
   }else{
     if(!answer) answer=[];
     const count=answer.filter(v=>v===n).length;
@@ -329,6 +349,10 @@ function draw(){
     }
     if(level===4){
       renderPile(g,[target],leftX,'yellow');
+      renderAnswerPegs(g,'right',rightX,'yellow');
+    }
+    if(level===5){
+      renderPile(g,[target],leftX,'yellow');
       renderAnswerPegs(g,'right',rightX,'red');
     }
   }
@@ -340,7 +364,7 @@ function draw(){
 function currentMasses(){
   if(level===1)return {L:target,R:answer===null?0:answer};
   if(level===2)return {L:answer===null?0:answer,R:given.reduce((a,b)=>a+b,0)};
-  if(level===3)return {L:target,R:answer?answer.reduce((a,b)=>a+b,0):0};
+  if(level===3||level===4)return {L:target,R:answer?answer.reduce((a,b)=>a+b,0):0};
   return {L:target,R:answer?answer.reduce((a,b)=>a+b,0)/2:0};
 }
 
@@ -360,7 +384,8 @@ function validAnswer(){
   if(level===1)return answer!==null && answer===target;
   if(level===2)return answer!==null && answer===target;
   if(level===3)return Array.isArray(answer)&&answer.length===2&&answer[0]+answer[1]===target;
-  if(level===4)return Array.isArray(answer)&&answer.length>=1&&answer.length<=4&&answer.reduce((a,b)=>a+b,0)===2*target;
+  if(level===4)return Array.isArray(answer)&&answer.length===3&&new Set(answer).size===3&&answer.reduce((a,b)=>a+b,0)===target;
+  if(level===5)return Array.isArray(answer)&&answer.length>=1&&answer.length<=4&&answer.reduce((a,b)=>a+b,0)===2*target;
 }
 
 function check(){
@@ -368,7 +393,8 @@ function check(){
   const complete =
     (level<=2 && answer!==null) ||
     (level===3 && answer && answer.length===2) ||
-    (level===4 && answer && answer.length>=1);
+    (level===4 && answer && answer.length===3) ||
+    (level===5 && answer && answer.length>=1);
   if(!complete){
     statusEl.textContent='Vervollständige deine Antwort, bevor du bestätigst.';
     statusEl.className='status bad'; return;
@@ -386,11 +412,20 @@ function check(){
   }
 }
 
+// Affiche l'égalité de référence sous forme de symboles uniquement (pas de texte)
+function updateLegend(){
+  if(level===5){
+    legend.innerHTML='<span class="mini y"></span><span class="eq">=</span><span class="mini r"></span><span class="mini r"></span>';
+  }else{
+    legend.innerHTML='<span class="mini y"></span><span class="eq">=</span><span class="mini y"></span>';
+  }
+}
+
 function setLevel(n){
   level=n;
   document.querySelectorAll('.controls button').forEach(b=>b.classList.remove('active'));
   document.getElementById('level'+n).classList.add('active');
-  legend.classList.toggle('show',n===4);
+  updateLegend();
   stopTimer(); timerEl.textContent='00:00.0';
   started=false; target=0; answer=null; given=[]; locked=false;
   statusEl.textContent='';statusEl.className='status';
@@ -403,6 +438,7 @@ document.getElementById('level1').onclick=()=>setLevel(1);
 document.getElementById('level2').onclick=()=>setLevel(2);
 document.getElementById('level3').onclick=()=>setLevel(3);
 document.getElementById('level4').onclick=()=>setLevel(4);
+document.getElementById('level5').onclick=()=>setLevel(5);
 launchBtn.onclick=launch;
 validateBtn.onclick=check;
 
