@@ -132,7 +132,7 @@ svg{display:block;width:100%;height:100%;flex:1;min-height:0}
 <div id="status" class="status"></div>
 </div>
 
-<div class="help">Klicke auf eine Markierung, um eine Scheibe abzulegen. Bei Stufe 3 und 5 f&uuml;gt ein 2. Klick auf dieselbe Markierung eine zweite Scheibe hinzu (Verdopplung), ein 3. Klick entfernt beide. Bei Stufe 1, 2 und 4 entfernt ein 2. Klick die Scheibe direkt.</div>
+<div class="help">Klicke auf eine Markierung, um eine Scheibe abzulegen. Bei Stufe 3, 4 und 5 f&uuml;gt ein 2. Klick auf dieselbe Markierung eine zweite Scheibe hinzu (Verdopplung), ein 3. Klick entfernt beide. Bei Stufe 1 und 2 entfernt ein 2. Klick die Scheibe direkt.</div>
 </div>
 
 <script>
@@ -186,7 +186,7 @@ function newExercise(){
     instruction.textContent='Finde zwei Werte rechts, deren Summe die Scheibe links ausgleicht.';
   }else if(level===4){
     target=randomInt(6,20);
-    instruction.textContent='Finde drei verschiedene Werte rechts, deren Summe die Scheibe links ausgleicht. Verwende genau drei Scheiben \u2013 keine Wiederholungen.';
+    instruction.textContent='Finde drei Werte rechts, deren Summe die Scheibe links ausgleicht. Verdopplungen sind erlaubt.';
   }else{
     target=randomInt(2,10);
     let parts=[];
@@ -268,18 +268,10 @@ function renderAnswerPegs(g,side,xFn,type){
 function place(side,n){
   if(level<=2){
     answer = (answer===n) ? null : n;
-  }else if(level===4){
-    if(!answer) answer=[];
-    const count=answer.filter(v=>v===n).length;
-    if(count===0){
-      if(answer.length<3) answer.push(n);
-    }else{
-      answer=answer.filter(v=>v!==n);
-    }
   }else{
     if(!answer) answer=[];
     const count=answer.filter(v=>v===n).length;
-    const maxTotal = level===3 ? 2 : 4;
+    const maxTotal = level===3 ? 2 : (level===4 ? 3 : 4);
     if(count===0){
       if(answer.length<maxTotal) answer.push(n);
     }else if(count===1){
@@ -391,7 +383,7 @@ function validAnswer(){
   if(level===1)return answer!==null && answer===target;
   if(level===2)return answer!==null && answer===target;
   if(level===3)return Array.isArray(answer)&&answer.length===2&&answer[0]+answer[1]===target;
-  if(level===4)return Array.isArray(answer)&&answer.length===3&&new Set(answer).size===3&&answer.reduce((a,b)=>a+b,0)===target;
+  if(level===4)return Array.isArray(answer)&&answer.length===3&&answer.reduce((a,b)=>a+b,0)===target;
   if(level===5)return Array.isArray(answer)&&answer.length>=1&&answer.length<=4&&answer.reduce((a,b)=>a+b,0)===2*target;
 }
 
