@@ -201,7 +201,7 @@ function newExercise(){
     parts.push(remaining);
     if(parts.some(v=>v>20)){ newExercise(); return; }
     given=shuffle(parts);
-    instruction.textContent='Finde einen oder mehrere Werte rechts, um die gelbe Scheibe auszugleichen (eine einzige Scheibe gen\u00FCgt, wenn sie das Doppelte wert ist).';
+    instruction.textContent='Finde einen Wert rechts, der das Doppelte der gelben Scheibe ist, oder zwei verschiedene Werte, deren Summe das Doppelte ergibt.';
   }
   draw();
 }
@@ -269,10 +269,18 @@ function renderAnswerPegs(g,side,xFn,type){
 function place(side,n){
   if(level<=2){
     answer = (answer===n) ? null : n;
+  }else if(level===5){
+    if(!answer) answer=[];
+    const count=answer.filter(v=>v===n).length;
+    if(count===0){
+      if(answer.length<2) answer.push(n);
+    }else{
+      answer=answer.filter(v=>v!==n);
+    }
   }else{
     if(!answer) answer=[];
     const count=answer.filter(v=>v===n).length;
-    const maxTotal = level===3 ? 2 : (level===4 ? 3 : 4);
+    const maxTotal = level===3 ? 2 : 3;
     if(count===0){
       if(answer.length<maxTotal) answer.push(n);
     }else if(count===1){
@@ -385,7 +393,7 @@ function validAnswer(){
   if(level===2)return answer!==null && answer===target;
   if(level===3)return Array.isArray(answer)&&answer.length===2&&answer[0]+answer[1]===target;
   if(level===4)return Array.isArray(answer)&&answer.length===3&&answer.reduce((a,b)=>a+b,0)===target;
-  if(level===5)return Array.isArray(answer)&&answer.length>=1&&answer.length<=4&&answer.reduce((a,b)=>a+b,0)===2*target;
+  if(level===5)return Array.isArray(answer)&&answer.length>=1&&answer.length<=2&&answer.reduce((a,b)=>a+b,0)===2*target;
 }
 
 function check(){
@@ -426,9 +434,9 @@ function updateHelp(){
   const texts={
     1:'Klicke auf eine Markierung rechts, um deine Scheibe abzulegen. Klicke noch einmal darauf, um sie zu entfernen.',
     2:'Klicke auf eine Markierung links, um deine Scheibe abzulegen. Klicke noch einmal darauf, um sie zu entfernen.',
-    3:'Klicke auf eine Markierung rechts, um eine Scheibe abzulegen. Ein 2. Klick auf dieselbe Markierung verdoppelt sie, ein 3. Klick entfernt beide. Du brauchst genau drei Scheiben.',
+    3:'Klicke auf eine Markierung rechts, um eine Scheibe abzulegen. Ein 2. Klick auf dieselbe Markierung verdoppelt sie, ein 3. Klick entfernt beide. Du brauchst genau zwei Scheiben.',
     4:'Klicke auf eine Markierung rechts, um eine Scheibe abzulegen. Ein 2. Klick auf dieselbe Markierung verdoppelt sie (z.\u00A0B. 5+5), ein 3. Klick entfernt beide. Du brauchst genau drei Scheiben. Du darfst zwei Scheiben auf denselben Punkt setzen',
-    5:'Klicke auf eine Markierung rechts, um eine rote Scheibe abzulegen. Ein 2. Klick auf dieselbe Markierung verdoppelt sie, ein 3. Klick entfernt beide. Du kannst 1 bis 4 rote Scheiben verwenden \u2013 eine einzige gen\u00FCgt, wenn sie das Doppelte des Zielwerts ist.'
+    5:'Klicke auf eine Markierung rechts, um eine rote Scheibe abzulegen. Ein 2. Klick auf dieselbe Markierung entfernt sie wieder \u2013 Verdopplungen sind hier nicht erlaubt. Du kannst 1 oder 2 verschiedene rote Scheiben verwenden, deren Summe das Doppelte des Zielwerts ergibt.'
   };
   helpEl.textContent=texts[level];
 }
