@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+LVEprimGard@gmail.com<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
@@ -27,7 +27,9 @@
 html,body{height:100%;margin:0}
 body{font-family:'Nunito',Arial,sans-serif;color:var(--ink);background:var(--paper);display:flex;justify-content:center;overflow:auto}
 .app{width:min(1250px,97vw);padding:0 0 24px}
-.stage{height:100vh;height:100dvh;display:flex;flex-direction:column;padding-top:10px}
+.stage{height:100vh;height:100dvh;display:flex;flex-direction:column;padding-top:10px;position:relative}
+.instruction-box{position:absolute;top:10px;right:0;width:clamp(190px,22vw,300px);background:var(--panel);border:1px solid #dbe4ea;border-left:4px solid var(--gold);border-radius:14px;padding:10px 14px;font-size:14px;line-height:1.35;font-weight:600;color:var(--ink);box-shadow:0 2px 8px #1f3a4d14}
+@media (max-width:860px){.instruction-box{position:static;width:auto;margin:0 0 6px;flex:none}}
 
 header{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:6px;flex:none}
 .header-row{display:flex;align-items:center;gap:18px;width:100%}
@@ -115,7 +117,7 @@ svg{display:block;width:100%;height:100%;flex:1;min-height:0}
 </div>
 </header>
 
-<div id="instruction" class="sr-only" role="status">Klicke auf &#8222;Start&#8220;, um zu beginnen.</div>
+<div id="instruction" class="instruction-box" role="status">Klicke auf &#8222;Start&#8220;, um zu beginnen.</div>
 
 <div class="control-row">
 <div id="legend" class="legend"></div>
@@ -181,7 +183,7 @@ function newExercise(){
   }else if(level===2){
     const a=randomInt(1,9), b=randomInt(1,9);
     given=[a,b]; target=a+b;
-    instruction.textContent='Die beiden Scheiben liegen rechts. Finde den Wert links, der die Waage ins Gleichgewicht bringt.';
+    instruction.textContent='Die beiden Scheiben liegen links. Finde den Wert rechts, der die Waage ins Gleichgewicht bringt.';
   }else if(level===3){
     target=randomInt(3,15);
     instruction.textContent='Finde zwei Werte rechts, deren Summe die Scheibe links ausgleicht.';
@@ -348,8 +350,8 @@ function draw(){
       renderAnswerPegs(g,'right',rightX,'yellow');
     }
     if(level===2){
-      renderPile(g,given,rightX,'yellow');
-      renderAnswerPegs(g,'left',leftX,'yellow');
+      renderPile(g,given,leftX,'yellow');
+      renderAnswerPegs(g,'right',rightX,'yellow');
     }
     if(level===3){
       renderPile(g,[target],leftX,'yellow');
@@ -371,7 +373,7 @@ function draw(){
 
 function currentMasses(){
   if(level===1)return {L:target,R:answer===null?0:answer};
-  if(level===2)return {L:answer===null?0:answer,R:given.reduce((a,b)=>a+b,0)};
+  if(level===2)return {L:given.reduce((a,b)=>a+b,0),R:answer===null?0:answer};
   if(level===3||level===4)return {L:target,R:answer?answer.reduce((a,b)=>a+b,0):0};
   return {L:target,R:answer?answer.reduce((a,b)=>a+b,0)/2:0};
 }
@@ -433,9 +435,9 @@ function updateLegend(){
 function updateHelp(){
   const texts={
     1:'Klicke auf eine Markierung rechts, um deine Scheibe abzulegen. Klicke noch einmal darauf, um sie zu entfernen.',
-    2:'Klicke auf eine Markierung links, um deine Scheibe abzulegen. Klicke noch einmal darauf, um sie zu entfernen.',
+    2:'Klicke auf eine Markierung rechts, um deine Scheibe abzulegen. Klicke noch einmal darauf, um sie zu entfernen.',
     3:'Klicke auf eine Markierung rechts, um eine Scheibe abzulegen. Ein 2. Klick auf dieselbe Markierung verdoppelt sie, ein 3. Klick entfernt beide. Du brauchst genau zwei Scheiben.',
-    4:'Klicke auf eine Markierung rechts, um eine Scheibe abzulegen. Ein 2. Klick auf dieselbe Markierung verdoppelt sie (z.\u00A0B. 5+5), ein 3. Klick entfernt beide. Du brauchst genau drei Scheiben. Du darfst drei Scheiben auf denselben Punkt setzen',
+    4:'Klicke auf eine Markierung rechts, um eine Scheibe abzulegen. Ein 2. Klick auf dieselbe Markierung verdoppelt sie (z.\u00A0B. 5+5), ein 3. Klick entfernt beide. Du brauchst genau drei Scheiben. Du darfst zwei Scheiben auf denselben Punkt setzen',
     5:'Klicke auf eine Markierung rechts, um eine rote Scheibe abzulegen. Ein 2. Klick auf dieselbe Markierung entfernt sie wieder \u2013 Verdopplungen sind hier nicht erlaubt. Du kannst 1 oder 2 verschiedene rote Scheiben verwenden, deren Summe das Doppelte des Zielwerts ergibt.'
   };
   helpEl.textContent=texts[level];
